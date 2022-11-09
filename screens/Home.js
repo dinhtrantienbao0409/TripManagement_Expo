@@ -19,7 +19,6 @@ const db = Database.openDatabase("MainDB");
 
 export default function Home({ navigation }) {
   const [trips, setTrips] = useState([]);
-  console.log("🚀 ~ file: Home.js ~ line 22 ~ Home ~ trips", trips);
   const [showBox, setShowBox] = useState(true);
 
   useEffect(() => {
