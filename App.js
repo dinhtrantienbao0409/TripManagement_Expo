@@ -14,15 +14,13 @@ export default function App({ navigation }) {
   //   navigation.navigate("CreateTrip");
   // };
   return (
-    <PaperProvider>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen name="Home" component={Home} />
-          <Stack.Screen name="Create Trip" component={CreateTrip} />
-          <Stack.Screen name="Update Trip" component={UpdateTrip} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </PaperProvider>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Create Trip" component={CreateTrip} />
+        <Stack.Screen name="Update Trip" component={UpdateTrip} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 

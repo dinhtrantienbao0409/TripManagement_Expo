@@ -21,10 +21,6 @@ export default function Home({ navigation }) {
   const [trips, setTrips] = useState([]);
   const [showBox, setShowBox] = useState(true);
 
-  useEffect(() => {
-    getData();
-  }, []);
-
   const getData = () => {
     try {
       db.transaction((tx) => {
@@ -44,40 +40,36 @@ export default function Home({ navigation }) {
     }
   };
 
-  // const deleteData = () => {
-  //   const id = trips.ID;
-  //   try {
-  //     db.transaction((tx) => {
-  //       tx.executeSql(
-  //         "DELETE FROM Trips WHERE id = ? ",
-  //         [id],
-  //         (tx, results) => {
-  //           console.log(
-  //             "🚀 ~ file: Home.js ~ line 55 ~ db.transaction ~ results.rowsAffected",
-  //             results
-  //           );
-  //           //   if (results.rows > 0) {
-  //           //     let newList = this.state.trips.filter((trip) => {
-  //           //       if (trip.id === id) return false;
-  //           //       else return true;
-  //           //     });
-  //           //     console.log(
-  //           //       "🚀 ~ file: Home.js ~ line 56 ~ newList ~ newList",
-  //           //       newList
-  //           //     );
-  //           //     setTrips({ newList });
-  //           //   }
-  //         }
-  //       );
-  //     });
-  //     console.log(
-  //       "🚀 ~ file: Home.js ~ line 72 ~ db.transaction ~ id",
-  //       trips["ID"]
-  //     );
-  //   } catch (error) {}
-  // };
+  const deleteData = (id) => {
+    console.log("🚀 ~ file: Home.js ~ line 48 ~ deleteData ~ id", id);
+    try {
+      db.transaction((tx) => {
+        tx.executeSql(
+          "DELETE FROM Trips WHERE id = ? ",
+          [id],
+          (tx, results) => {
+            console.log(
+              "🚀 ~ file: Home.js ~ line 55 ~ db.transaction ~ results.rowsAffected",
+              results
+            );
+            //   if (results.rows > 0) {
+            //     let newList = this.state.trips.filter((trip) => {
+            //       if (trip.id === id) return false;
+            //       else return true;
+            //     });
+            //     console.log(
+            //       "🚀 ~ file: Home.js ~ line 56 ~ newList ~ newList",
+            //       newList
+            //     );
+            //     setTrips({ newList });
+            //   }
+          }
+        );
+      });
+    } catch (error) {}
+  };
 
-  const confirmDialog = () => {
+  const confirmDialog = (id) => {
     return Alert.alert(
       "Are your sure?",
       "Are you sure you want to remove this trip?",
@@ -90,16 +82,20 @@ export default function Home({ navigation }) {
         // The "Yes" button
         {
           text: "Yes",
-          onPress: (ID) => {
+          onPress: () => {
             setShowBox(false);
-            deleteData(ID);
+            deleteData(id);
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "Home" }],
+            });
           },
         },
       ]
     );
   };
 
-  const Item = ({ trip, destination, date, risk, description }) => (
+  const Item = ({ trip, destination, date, risk, description, id }) => (
     <View style={styles.item}>
       <View
         style={{ flex: 1, flexDirection: "row", alignItems: "space-between" }}
@@ -115,7 +111,9 @@ export default function Home({ navigation }) {
           name="delete"
           size={24}
           color="black"
-          onPress={() => confirmDialog()}
+          onPress={() => {
+            confirmDialog(id);
+          }}
         />
       </View>
       <Text style={styles.titleView}></Text>
@@ -151,8 +149,15 @@ export default function Home({ navigation }) {
       date={item["Date"]}
       risk={item["Risk"]}
       description={item["Descriptions"]}
+      id={item["ID"]}
     />
   );
+
+  useEffect(() => {
+    navigation.addListener("focus", () => {
+      getData();
+    });
+  }, [navigation]);
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
