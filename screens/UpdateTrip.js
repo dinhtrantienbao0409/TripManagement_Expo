@@ -10,72 +10,49 @@ import {
   Alert,
 } from "react-native";
 import * as Database from "expo-sqlite";
+import UpdateForm from "./UpdateForm";
+
 const db = Database.openDatabase("MainDB");
 
-export default function UpdateTrip() {
-  const [trips, setTrips] = useState("");
-  const [destinations, setDestinations] = useState("");
-  const [date, setDate] = useState("");
-  const [risks, setRisks] = useState("");
-  const [descriptions, setDescriptions] = useState("");
+export default function UpdateTrip({ navigation, route }) {
+  const [trips, setTrips] = useState({});
 
+  const id = route.params.id;
+  const getDataById = () => {
+    try {
+      db.transaction((tx) => {
+        tx.executeSql(
+          "SELECT * FROM Trips WHERE id = ?",
+          [id],
+          (tx, results) => {
+            // console.log(
+            //   "🚀 ~ file: UpdateTrip.js ~ line 27 ~ tx.executeSql ~ results",
+            //   results.rows._array[0]
+            // );
+
+            setTrips(results.rows._array[0]);
+
+            // var len = results.rows.length;
+            // if (len > 0) {
+            //   setTrips(results.rows._array);
+            // }
+          }
+        );
+      });
+    } catch (error) {
+      console.log("🚀 ~ file: Home.js ~ line 32 ~ getData ~ error", error);
+    }
+  };
+
+  useEffect(() => {
+    navigation.addListener("focus", () => {
+      getDataById();
+    });
+  }, [navigation]);
   return (
     <View>
       <Text>Update Trip</Text>
-      <View style={styles.container}>
-        <StatusBar backgroundColor="black" />
-        <Text style={styles.label}>Trip Name:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter trip name"
-          value={trips}
-          onChangeText={setTrips}
-        />
-        <Text style={styles.label}>Trip Destination:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter trip destinations"
-          value={destinations}
-          onChangeText={setDestinations}
-        />
-        <Text style={styles.label}>Trip Date:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter trip date"
-          value={date}
-          onChangeText={setDate}
-        />
-        <Text style={styles.label}>Risk Required Assessment:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter trip risk"
-          value={risks}
-          onChangeText={setRisks}
-        />
-        <Text style={styles.label}>Trip Descriptions:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter trip descriptions"
-          value={descriptions}
-          onChangeText={setDescriptions}
-        />
-        <Button title="Update Trip" />
-      </View>
+      <UpdateForm navigation={navigation} trips={trips} />
     </View>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 100,
-  },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
-  label: {
-    marginLeft: 12,
-    fontWeight: "bold",
-  },
-});
