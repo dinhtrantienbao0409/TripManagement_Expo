@@ -30,7 +30,6 @@ export default function CreateTrip({ navigation }) {
   const [descriptions, setDescriptions] = useState("");
 
   const [date, setDate] = useState("");
-  console.log("🚀 ~ file: CreateTrip.js ~ line 33 ~ CreateTrip ~ date", date);
   const [datePicker, setDatePicker] = useState(true);
   const [text, setText] = useState("");
 
@@ -123,7 +122,7 @@ export default function CreateTrip({ navigation }) {
             [trips, destinations, date, risks, descriptions]
           );
         });
-        navigation.navigate("Home");
+        // navigation.navigate("Home");
       } catch (error) {
         console.log(
           "🚀 ~ file: CreateTrip.js ~ line 64 ~ setData ~ error",
@@ -195,7 +194,13 @@ export default function CreateTrip({ navigation }) {
         value={descriptions}
         onChangeText={setDescriptions}
       />
-      <Button title="Create" onPress={() => setData()} />
+      <Button
+        title="Create"
+        onPress={() => {
+          setData();
+          navigation.navigate("Home");
+        }}
+      />
     </View>
   );
 }
