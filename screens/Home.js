@@ -11,6 +11,7 @@ import {
   FlatList,
   SafeAreaView,
   TouchableWithoutFeedback,
+  TouchableOpacity,
 } from "react-native";
 import * as Database from "expo-sqlite";
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
@@ -52,21 +53,12 @@ export default function Home({ navigation }) {
               "🚀 ~ file: Home.js ~ line 55 ~ db.transaction ~ results.rowsAffected",
               results
             );
-            //   if (results.rows > 0) {
-            //     let newList = this.state.trips.filter((trip) => {
-            //       if (trip.id === id) return false;
-            //       else return true;
-            //     });
-            //     console.log(
-            //       "🚀 ~ file: Home.js ~ line 56 ~ newList ~ newList",
-            //       newList
-            //     );
-            //     setTrips({ newList });
-            //   }
           }
         );
       });
-    } catch (error) {}
+    } catch (error) {
+      console.log("🚀 ~ file: Home.js ~ line 60 ~ deleteData ~ error", error);
+    }
   };
 
   const confirmDialog = (id) => {
@@ -96,16 +88,14 @@ export default function Home({ navigation }) {
   };
 
   const Item = ({ trip, destination, date, risk, description, id }) => (
-    <View style={styles.item}>
+    <TouchableOpacity
+      style={styles.item}
+      onPress={() => navigation.navigate("Update Trip", { id: id })}
+    >
       <View
         style={{ flex: 1, flexDirection: "row", alignItems: "space-between" }}
       >
-        <Text
-          style={styles.tripName}
-          onPress={() => navigation.navigate("Update Trip")}
-        >
-          {trip}
-        </Text>
+        <Text style={styles.tripName}>{trip}</Text>
 
         <MaterialIcons
           name="delete"
@@ -134,7 +124,7 @@ export default function Home({ navigation }) {
         <Entypo name="pencil" size={24} color="black" />
         <Text style={styles.tripDestination}> Descriptions: {description}</Text>
       </Text>
-    </View>
+    </TouchableOpacity>
   );
 
   //example flatList
